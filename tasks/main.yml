@@ -1,0 +1,25 @@
+---
+
+- name: Update packages.
+  action: apt update-cache=yes cache_valid_time={{ apt_cache_valid_time }}
+
+- name: Install SSH packages.
+  action: apt pkg="{{ item }}" state=latest
+  with_items:
+    - openssh-server
+
+- name: Configuring SSH port.
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp="^Port "
+    line="Port {{ sshd_port }}"
+    state=present
+  notify: restart ssh
+
+- name: Configuring SSH Root login.
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp="^PermitRootLogin "
+    line="PermitRootLogin {{ 'yes' if sshd_root_login else 'no' }}"
+    state=present
+  notify: restart ssh

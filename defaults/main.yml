@@ -1,0 +1,4 @@
+---
+
+sshd_port: "{{ ansible_ssh_port if ansible_ssh_port is defined else '22' }}"
+sshd_root_login: true
